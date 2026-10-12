@@ -40,20 +40,20 @@ em{font-weight:400;color:var(--green)}
 .hero{position:relative;isolation:isolate;text-align:center;min-height:max(100svh,680px);overflow:hidden;background:var(--paper)}
 .hero-content{position:relative;z-index:2;max-width:1024px;margin:auto;padding:clamp(136px,31svh,272px) 20px 46svh;animation:hero-title-enter 1s cubic-bezier(.2,.7,.2,1) .15s both}
 .hero h1{font-family:"Instrument Sans",var(--sans);font-size:clamp(40px,4.6vw,67.2px);font-weight:400;line-height:1.14;letter-spacing:-.03em;margin:0;text-wrap:balance}
-.hero-cloud{position:absolute;z-index:0;pointer-events:none;mix-blend-mode:multiply;animation:cloud-arrive 1.25s cubic-bezier(.2,.7,.2,1) both,cloud-drift 14s ease-in-out 1.25s infinite alternate}
+.hero-cloud{position:absolute;z-index:0;pointer-events:none;mix-blend-mode:multiply;--cloud-shift:64px;animation:cloud-arrive 1.25s cubic-bezier(.2,.7,.2,1) both,cloud-drift 16s ease-in-out 1.25s infinite alternate}
 .hero-cloud-left{top:3%;left:-5%;width:clamp(220px,38vw,580px)}
-.hero-cloud-right{top:7%;right:-6%;width:clamp(200px,33vw,520px);animation-delay:.18s,-7s}
+.hero-cloud-right{top:7%;right:-6%;width:clamp(200px,33vw,520px);--cloud-shift:-64px;animation-delay:.18s,-7s}
 .hero-cloud img{width:100%;height:auto}
 .hero-cloud-right img{transform:scaleX(-1)}
 .hero-birds{position:absolute;inset:0;pointer-events:none;color:#27303bcc}
-.bird{position:absolute;width:40px;height:16px;animation:bird-appear .8s ease-out both,bird-float 9s ease-in-out infinite alternate}
+.bird{position:absolute;width:40px;height:16px;--bird-shift:96px;animation:bird-appear .8s ease-out both,bird-float 9s ease-in-out infinite alternate}
 .bird path{transform-box:fill-box;transform-origin:center;animation:bird-flap 1.05s ease-in-out infinite alternate}
 .bird-one{top:18%;left:53%}
-.bird-two{top:16%;left:49%;width:30px;animation-delay:.12s,-3s}
-.bird-three{top:20%;right:3%;width:36px;animation-delay:.24s,-5s}
+.bird-two{top:16%;left:49%;width:30px;--bird-shift:72px;animation-delay:.12s,-3s}
+.bird-three{top:20%;right:3%;width:36px;--bird-shift:-72px;animation-delay:.24s,-5s}
 .bird-four{top:24%;left:18%;width:32px;animation-delay:.36s,-2s}
-.bird-five{top:25%;left:15%;width:24px;animation-delay:.48s,-6s}
-.bird-six{top:13%;left:65%;width:22px;animation-delay:.6s,-4s}
+.bird-five{top:25%;left:15%;width:24px;--bird-shift:62px;animation-delay:.48s,-6s}
+.bird-six{top:13%;left:65%;width:22px;--bird-shift:78px;animation-delay:.6s,-4s}
 .hero-scenery{position:absolute;inset:auto 0 0;height:66%;min-height:360px;z-index:0;pointer-events:none;animation:scenery-arrive 1.25s cubic-bezier(.2,.7,.2,1) .2s both}
 .hero-landscape{width:100%;height:100%;object-fit:cover;object-position:50% 72%;mask-image:linear-gradient(transparent 0%,black 14%)}
 .hero-glass{position:absolute;--tile:clamp(40px,5.6vw,82px);--tile-gap:6px;width:calc(4 * (var(--tile) + var(--tile-gap)));height:calc(5 * (var(--tile) + var(--tile-gap)))}
@@ -76,8 +76,8 @@ em{font-weight:400;color:var(--green)}
 @keyframes bird-flap{from{transform:scaleY(.62)}to{transform:scaleY(1)}}
 @keyframes glass-pop{from{opacity:0;transform:translateY(20px) scale(.78)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes glass-breathe{0%,100%{opacity:.05}50%{opacity:.48}}
-@keyframes cloud-drift{to{translate:12px 6px}}
-@keyframes bird-float{to{translate:15px -5px}}
+@keyframes cloud-drift{to{translate:var(--cloud-shift) 8px}}
+@keyframes bird-float{to{translate:var(--bird-shift) -28px}}
 .motion-ready [data-reveal]{opacity:0;translate:0 22px;transition:opacity .75s ease,translate .75s cubic-bezier(.2,.7,.2,1);transition-delay:var(--reveal-delay,0ms)}
 .motion-ready [data-reveal].is-visible{opacity:1;translate:0 0}
 .promises{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:30px;padding-top:65px;padding-bottom:65px;border-bottom:1px solid var(--line)}
