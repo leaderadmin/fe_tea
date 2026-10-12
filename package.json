@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node server.mjs",
     "check": "node --check server.mjs && node --check app.js && node --check shop.js",
+    "build:pages": "node scripts/build-pages.mjs",
     "test": "node --test tests/shop.test.mjs"
   }
 }

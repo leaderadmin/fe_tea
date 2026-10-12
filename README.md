@@ -26,9 +26,12 @@ Mở http://127.0.0.1:3000. Đổi cổng bằng `PORT=3001 npm start`.
 ```sh
 npm run check
 npm test
+npm run build:pages
 ```
 
-Có thể đưa các tệp HTML, `styles.css`, `shop.css`, `app.js`, `shop.js` và thư mục `assets` lên dịch vụ hosting tĩnh. `server.mjs` chỉ là máy chủ xem thử tại máy, chỉ lắng nghe trên loopback. JavaScript dùng ES modules, nên mở bằng máy chủ HTTP thay vì `file://`.
+Có thể đưa các tệp HTML, `styles.css`, `shop.css`, `app.js`, `shop.js` và thư mục `assets` lên dịch vụ hosting tĩnh. `npm run build:pages` tạo thư mục `_site` chỉ gồm tài nguyên cần triển khai lên GitHub Pages. `server.mjs` chỉ là máy chủ xem thử tại máy, chỉ lắng nghe trên loopback. JavaScript dùng ES modules, nên mở bằng máy chủ HTTP thay vì `file://`.
+
+Website công khai tại https://leaderadmin.github.io/fe_tea/ khi GitHub Pages được bật cho repository. Mỗi lần push lên `main`, GitHub Actions tự build và deploy. Để kích hoạt lần đầu, chủ repository cần mở **Settings → Pages → Build and deployment → Source: GitHub Actions**; repository hiện chưa bật Pages và chỉ chủ repository mới có quyền thay đổi thiết lập đó.
 
 ## Các trang và đặt trà
 
