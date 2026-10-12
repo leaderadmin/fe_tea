@@ -1,0 +1,12 @@
+{
+  "name": "moc-tra-landing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Landing page tra xanh Thai Nguyen",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check app.js && node --check shop.js",
+    "test": "node --test tests/shop.test.mjs"
+  }
+}
