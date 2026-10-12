@@ -31,7 +31,9 @@ npm run build:pages
 
 Có thể đưa các tệp HTML, `styles.css`, `shop.css`, `app.js`, `shop.js` và thư mục `assets` lên dịch vụ hosting tĩnh. `npm run build:pages` tạo thư mục `_site` chỉ gồm tài nguyên cần triển khai lên GitHub Pages. `server.mjs` chỉ là máy chủ xem thử tại máy, chỉ lắng nghe trên loopback. JavaScript dùng ES modules, nên mở bằng máy chủ HTTP thay vì `file://`.
 
-Website công khai tại https://leaderadmin.github.io/fe_tea/ khi GitHub Pages được bật cho repository. Mỗi lần push lên `main`, GitHub Actions tự build và deploy. Để kích hoạt lần đầu, chủ repository cần mở **Settings → Pages → Build and deployment → Source: GitHub Actions**; repository hiện chưa bật Pages và chỉ chủ repository mới có quyền thay đổi thiết lập đó.
+Website công khai tại https://leaderadmin.github.io/fe_tea/ khi GitHub Pages được bật cho repository. Mỗi lần push lên `main`, GitHub Actions tự build và deploy. Để kích hoạt lần đầu, người có quyền quản trị repository cần mở **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+Job `deploy` kiểm tra cấu hình Pages bằng `actions/configure-pages` trước khi triển khai. Nếu gặp lỗi `Get Pages site failed` hoặc `Failed to create deployment (status: 404)` kèm yêu cầu bật Pages, hãy chọn nguồn **GitHub Actions** trong thiết lập trên, rồi chạy lại workflow **Deploy GitHub Pages** từ tab **Actions → Run workflow** trên nhánh `main`. `GITHUB_TOKEN` của workflow không thể tự bật Pages; bước kiểm tra không thay thế thao tác thiết lập lần đầu của quản trị viên.
 
 ## Các trang và đặt trà
 
