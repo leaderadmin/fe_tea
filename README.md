@@ -33,6 +33,8 @@ Có thể đưa các tệp HTML, `styles.css`, `shop.css`, `app.js`, `shop.js` v
 
 Website công khai tại https://leaderadmin.github.io/fe_tea/ khi GitHub Pages được bật cho repository. Mỗi lần push lên `main`, GitHub Actions tự build và deploy. Để kích hoạt lần đầu, chủ repository cần mở **Settings → Pages → Build and deployment → Source: GitHub Actions**; repository hiện chưa bật Pages và chỉ chủ repository mới có quyền thay đổi thiết lập đó.
 
+Nếu job `deploy` báo `Failed to create deployment (status: 404)` hoặc bước kiểm tra cấu hình Pages báo không tìm thấy site, chủ repository cần bật Pages theo hướng dẫn trên, sau đó vào **Actions → Deploy GitHub Pages → Run workflow** trên nhánh `main` (hoặc chạy lại workflow bị lỗi). Workflow kiểm tra cấu hình Pages trước khi deploy; `GITHUB_TOKEN` mặc định không thể bật Pages cho repository chưa được thiết lập. Không cần thêm personal access token vào workflow.
+
 ## Các trang và đặt trà
 
 - `index.html`: landing page, giữ nguyên hero đã duyệt; có gói trà nổi bật và hướng dẫn đặt qua Zalo.
