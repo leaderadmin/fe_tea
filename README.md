@@ -4,7 +4,7 @@ Landing page tiếng Việt cho trà xanh Thái Nguyên: trà sạch, sao củi,
 
 Bảng màu lấy cảm hứng từ Fieldhand: nền trắng `#ffffff`, chữ gần đen `#14170f`, xanh olive `#4a5d0e`, điểm nhấn tím lavender và hồng đào pastel trong phong cảnh. Các màu giao diện chính được quản lý bằng biến CSS trong `styles.css`; màu minh họa nằm trong các SVG tại `assets`.
 
-Hero sử dụng phông Instrument Sans, phong cảnh núi–hồ, mây hai bên, chim và ô kính trang trí. Hai ảnh gốc được lưu tại `assets/fieldhand-landscape.jpg` và `assets/fieldhand-cloud.jpg`, nguồn lần lượt là `https://fieldhand-template.modulify.website/images/hero-landscape.jpg` và `https://fieldhand-template.modulify.website/images/cloud.jpg`. Quyền sử dụng do chủ dự án xác nhận; cần giữ giấy phép phù hợp khi triển khai. Hình núi–hồ là trang trí, không phải ảnh vùng chè Thái Nguyên.
+Hero sử dụng phông Instrument Sans, phong cảnh núi–hồ, mây hai bên, chim và ô kính trang trí. Chuyển động gồm tiêu đề/phong cảnh xuất hiện nhẹ, mây trôi, chim vỗ cánh và ô kính lần lượt hiện rồi phát sáng chậm; các phần nội dung cũng xuất hiện khi cuộn. Tất cả animation được giảm/tắt theo cài đặt `prefers-reduced-motion` của thiết bị. Hai ảnh gốc được lưu tại `assets/fieldhand-landscape.jpg` và `assets/fieldhand-cloud.jpg`, nguồn lần lượt là `https://fieldhand-template.modulify.website/images/hero-landscape.jpg` và `https://fieldhand-template.modulify.website/images/cloud.jpg`. Quyền sử dụng do chủ dự án xác nhận; cần giữ giấy phép phù hợp khi triển khai. Hình núi–hồ là trang trí, không phải ảnh vùng chè Thái Nguyên.
 
 ## Chạy tại máy
 

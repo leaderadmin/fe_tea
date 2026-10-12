@@ -17,6 +17,22 @@ document.querySelectorAll('[data-tea-photo-grid]').forEach(grid => {
   grid.innerHTML = editorialPhotos.map(photo => `<figure class="tea-photo-card"><img src="${encodeURI(photo.src)}" alt="${photo.alt}" width="${photo.width}" height="${photo.height}" loading="lazy" decoding="async"><figcaption><h3>${photo.caption}</h3><p>${photo.description}</p></figcaption></figure>`).join('');
 });
 
+const revealTargets = document.querySelectorAll('[data-reveal]');
+if (revealTargets.length && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.classList.add('motion-ready');
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  revealTargets.forEach((target, index) => {
+    target.style.setProperty('--reveal-delay', `${index % 4 * 90}ms`);
+    revealObserver.observe(target);
+  });
+}
+
 const dialog = document.querySelector('#order-dialog');
 const form = document.querySelector('#order-form');
 const packageSelect = document.querySelector('#package');
