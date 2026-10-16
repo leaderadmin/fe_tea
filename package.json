@@ -6,8 +6,10 @@
   "description": "Landing page tra xanh Thai Nguyen",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check app.js && node --check shop.js",
+    "check:syntax": "node --check server.mjs && node --check app.js && node --check shop.js",
+    "check": "npm run check:syntax && npm test",
     "build:pages": "node scripts/build-pages.mjs",
-    "test": "node --test tests/shop.test.mjs"
+    "content:submit": "node scripts/submit-content-draft.mjs",
+    "test": "node --test --test-reporter=spec tests/shop.test.mjs tests/submit-content-draft.test.mjs && npm --prefix cms test -- --reporter=verbose && npm --prefix frontend test -- --reporter=verbose && cd backend && DB_CONNECTION=sqlite DB_DATABASE=:memory: DB_URL= APP_ENV=testing APP_CONFIG_CACHE=/tmp/tea-test-config-cache.php LOG_CHANNEL=stderr php artisan test"
   }
 }

@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+
+:root {
+  --paper: #ffffff;
+  --ink: #14170f;
+  --green: #4a5d0e;
+  --muted: #686b61;
+  --line: #e7e8e2;
+  --surface: #f8f9f5;
+  --serif: "Playfair Display", Georgia, serif;
+  --sans: "Be Vietnam Pro", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -1.8px;
+  line-height: 1.2;
+}
+
+em {
+  color: var(--green);
+  font-weight: 400;
+}
+
+:focus-visible {
+  outline: 3px solid #bd944b;
+  outline-offset: 5px;
+}
+
+.eyebrow {
+  display: block;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  border: 1px solid var(--green);
+  border-radius: 40px;
+  padding: 16px 26px;
+  background: var(--green);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: background .2s, transform .2s;
+}
+
+.button:hover {
+  background: #394909;
+  transform: translateY(-2px);
+}
+
+.button-small {
+  gap: 20px;
+  padding: 11px 23px;
+  font-size: 11px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--serif);
+  font-size: 25px;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+
+.brand-dot {
+  color: var(--green);
+}

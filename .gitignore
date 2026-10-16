@@ -3,6 +3,10 @@ node_modules/
 _site/
 .env
 .env.*
+!.env.example
+!.env.agent.example
+!**/.env.example
 *.log
 .tsupgrader/
+content/inbox/
 assets/imgres.html

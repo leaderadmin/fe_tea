@@ -175,7 +175,7 @@ em{font-weight:400;color:var(--green)}
 .closing .eyebrow{font-size:8px;position:relative;z-index:1}
 .closing h2{font-size:clamp(36px,4vw,55px);margin:20px 0 27px;position:relative;z-index:1}
 .closing .button{position:relative;z-index:1}
-.closing-hills{position:absolute;inset:0;background:url("assets/tea-hills.svg") center bottom / cover;opacity:.12;pointer-events:none;mask-image:linear-gradient(transparent 25%,black)}
+.closing-hills{position:absolute;inset:0;background:url("/assets/tea-hills.svg") center bottom / cover;opacity:.12;pointer-events:none;mask-image:linear-gradient(transparent 25%,black)}
 .footer{padding-top:40px;padding-bottom:23px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:25px}
 .footer .brand{font-size:23px}
 .footer p{font-size:9px;color:var(--muted);margin-top:7px}

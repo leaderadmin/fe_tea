@@ -31,6 +31,72 @@ npm run build:pages
 
 Có thể đưa các tệp HTML, `styles.css`, `shop.css`, `app.js`, `shop.js` và thư mục `assets` lên dịch vụ hosting tĩnh. `npm run build:pages` tạo thư mục `_site` chỉ gồm tài nguyên cần triển khai lên GitHub Pages. `server.mjs` chỉ là máy chủ xem thử tại máy, chỉ lắng nghe trên loopback. JavaScript dùng ES modules, nên mở bằng máy chủ HTTP thay vì `file://`.
 
+## Tách storefront, CMS và API
+
+Storefront React, CMS React và Laravel API là ba ứng dụng độc lập; CMS/API có thư mục Git riêng và không được đưa vào repository storefront. Docker Compose chỉ dùng để chạy ba ứng dụng cùng nhau khi phát triển local. Cần Docker Desktop và Docker Compose:
+
+```sh
+cp .env.example .env
+docker compose up --build -d
+```
+
+- React storefront: http://localhost:5173
+- React CMS: http://localhost:5174/admin/login
+- Laravel API: http://localhost:8000
+- MySQL local: `127.0.0.1:3307`
+- Redis local: `127.0.0.1:6380`
+
+`npm start` ở thư mục gốc vẫn chạy bản website tĩnh cũ tại http://127.0.0.1:3000; bản đó không lấy dữ liệu CMS. React storefront trên cổng 5173 mới là FE kết nối Laravel API.
+
+Thư mục gốc hiện là repository FE `fe_tea`; `cms/` và `backend/` là hai repository local độc lập. Cần tạo remote riêng cho CMS và API trước khi push hai repository đó. Lần khởi động đầu tiên sẽ cài backend, tạo khóa ứng dụng, chạy migration và nạp nội dung ban đầu. Tạo tài khoản admin riêng bằng lệnh tương tác:
+
+```sh
+docker compose --env-file .env.example exec api php artisan cms:create-admin admin@example.com
+```
+
+Lệnh sẽ yêu cầu tên và mật khẩu; không có tài khoản hay mật khẩu mặc định. Đăng nhập CMS tại `http://localhost:5174/admin/login`. Tạo tài khoản trong **Tài khoản**; tạo role tùy chỉnh, chọn quyền theo tính năng và gán role đó cho tài khoản trong **Vai trò & quyền hạn**. Role hệ thống `admin` và `editor` không thể đổi tên hoặc xóa; `admin` luôn được bảo vệ toàn quyền. Editor chỉ có thể sửa và gửi nội dung chờ duyệt; admin mới có thể phê duyệt để xuất bản. Bài viết và sản phẩm có màn quản trị riêng. Trang chủ có trình sửa nội dung theo từng phần; trang nội dung hỗ trợ văn bản Markdown và các mục nội dung. Ảnh tải lên quản lý trong **Thư viện ảnh**.
+
+## Agent soạn bài cho website
+
+Quy trình Copilot Agent hiện tại là **người dùng chủ động gọi agent → agent soạn bài thành bản nháp → agent gửi bài vào hàng chờ CMS → admin duyệt → bài đăng ngay hoặc tự xuất bản theo lịch**. Agent không được quyền duyệt hay tự đưa nội dung ra website.
+
+1. Trong CMS, tạo role riêng `content-agent` với đúng các quyền `posts.view`, `posts.create`, `posts.update`, `posts.submit`, `categories.view`, rồi gán role đó cho tài khoản agent. Không dùng role `editor` (role này có quyền rộng hơn cần thiết) hoặc role `admin`.
+2. Tạo token giới hạn cho tài khoản đó; lệnh từ chối tài khoản admin:
+
+   ```sh
+   docker compose exec api php artisan cms:issue-content-agent-token agent@example.com
+   ```
+
+3. Sao chép token được hiển thị một lần vào tệp `.env.agent`:
+
+   ```sh
+   cp .env.agent.example .env.agent
+   ```
+
+   Đây là thông tin bí mật, không gửi token vào cuộc trò chuyện hoặc commit lên Git. Dán token vào giá trị `CMS_AGENT_TOKEN` trong tệp; token có hiệu lực 90 ngày. Chạy lại lệnh sẽ thu hồi token agent cũ cùng tên và tạo token mới.
+4. Với Docker đang chạy, chạy migration mới và bật scheduler:
+
+   ```sh
+   docker compose exec api php artisan migrate --force
+   docker compose up -d --build api cms scheduler
+   ```
+
+5. Trong VS Code Copilot Chat, chọn prompt `/moc-tra-content` rồi cung cấp chủ đề bài viết và các thông tin đã xác thực. Agent tạo file JSON và gửi lên CMS bằng lệnh `npm run content:submit -- content/inbox/<filename>.json`.
+6. Mở `/admin/reviews` trong CMS để kiểm tra và duyệt bài. Nếu có lịch đăng trong tương lai, service Docker `scheduler` sẽ kiểm tra mỗi phút và tự đăng khi đến giờ. Nếu không đặt lịch, bài được đăng ngay khi admin duyệt.
+
+`.env.agent` và `content/inbox/` được Git bỏ qua. Nếu token bị lộ hoặc hết hạn, chạy lại lệnh để thu hồi token agent cũ cùng tên và tạo token mới. CMS hiện chưa có màn hình quản lý token. Quy trình này mới áp dụng cho bài viết trên website; chưa kết nối đăng tự động lên Facebook, Instagram, TikTok hoặc Zalo.
+
+Các giá trị trong `.env.example` chỉ dành cho máy local. Ba ứng dụng có thể build/deploy riêng; production cần cấu hình `VITE_API_BASE_URL`, `VITE_PUBLIC_SITE_URL`, `CORS_ALLOWED_ORIGINS`, `SANCTUM_STATEFUL_DOMAINS` và cookie session theo domain thật. Để đăng nhập Sanctum bằng cookie khi triển khai độc lập, nên dùng các subdomain cùng một domain gốc (ví dụ `www`, `cms`, `api`). Trước khi triển khai VPS, phải thay mọi mật khẩu/khóa, đặt `APP_ENV=production`, `APP_DEBUG=false`, bật HTTPS và cookie bảo mật; không công khai cổng MySQL/Redis hoặc dùng Vite dev server làm frontend production. Chưa cấu hình reverse proxy, TLS, backup/restore hay pipeline triển khai VPS.
+
+Để xem log hoặc dừng đúng stack CMS local:
+
+```sh
+docker compose logs -f api frontend cms
+docker compose down
+```
+
+`docker compose down` giữ dữ liệu. Chỉ xóa volume theo quy trình backup/khôi phục đã xác nhận; cơ sở dữ liệu và ảnh tải lên được lưu trong Docker volumes.
+
 Website công khai tại https://leaderadmin.github.io/fe_tea/ khi GitHub Pages được bật cho repository. Mỗi lần push lên `main`, GitHub Actions tự build và deploy. Để kích hoạt lần đầu, chủ repository cần mở **Settings → Pages → Build and deployment → Source: GitHub Actions**; repository hiện chưa bật Pages và chỉ chủ repository mới có quyền thay đổi thiết lập đó.
 
 ## Các trang và đặt trà

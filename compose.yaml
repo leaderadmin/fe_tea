@@ -1,0 +1,132 @@
+name: ${COMPOSE_PROJECT_NAME:-moc-tra-cms}
+
+services:
+  api:
+    build:
+      context: ./backend
+    working_dir: /var/www/app
+    command: ["sh", "/usr/local/bin/start-app.sh"]
+    environment: &backend_environment
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-moc_tra}
+      DB_USERNAME: ${DB_USERNAME:-moc_tra}
+      DB_PASSWORD: ${DB_PASSWORD:-local-only-change-this}
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: database
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_PORT: 6379
+      FILESYSTEM_DISK: public
+      SANCTUM_STATEFUL_DOMAINS: localhost:5173,localhost:5174,127.0.0.1:5173,127.0.0.1:5174
+      SESSION_DOMAIN: localhost
+      SESSION_SECURE_COOKIE: "false"
+    volumes:
+      - ./backend:/var/www/app
+      - cms_media:/var/www/app/storage/app/public
+      - ./assets:/var/www/app/legacy-assets:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "php -r '$$response = @file_get_contents(\"http://127.0.0.1:8000/api/public/site\"); exit($$response === false ? 1 : 0);'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: ./backend
+    working_dir: /var/www/app
+    command: ["php", "artisan", "schedule:work"]
+    environment: *backend_environment
+    volumes:
+      - ./backend:/var/www/app
+      - cms_media:/var/www/app/storage/app/public
+      - ./assets:/var/www/app/legacy-assets:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+      VITE_PUBLIC_SITE_URL: http://localhost:5173
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  cms:
+    build:
+      context: ./cms
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+      VITE_PUBLIC_SITE_URL: http://localhost:5173
+    volumes:
+      - ./cms:/app
+      - cms_node_modules:/app/node_modules
+    ports:
+      - "5174:5173"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-moc_tra}
+      MYSQL_USER: ${DB_USERNAME:-moc_tra}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-local-only-change-this}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local-root-only-change-this}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["sh", "-c", "if [ -n \"$${REDIS_PASSWORD}\" ]; then exec redis-server --appendonly yes --requirepass \"$${REDIS_PASSWORD}\"; else exec redis-server --appendonly yes; fi"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "if [ -z \"$${REDIS_PASSWORD}\" ]; then redis-cli ping; else redis-cli -a \"$${REDIS_PASSWORD}\" ping; fi"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  cms_media:
+  frontend_node_modules:
+  cms_node_modules:
+  mysql_data:
+  redis_data:
